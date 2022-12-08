@@ -3,50 +3,51 @@
 
 require 'optparse'
 
-OPTIONS = ARGV.getopts('l', 'w', 'c')
-NO_OPTION = OPTIONS == { 'l' => false, 'w' => false, 'c' => false }
-NO_OR_L = NO_OPTION || OPTIONS['l']
-NO_OR_W = NO_OPTION || OPTIONS['w']
-NO_OR_C = NO_OPTION || OPTIONS['c']
-ARGV_SIZE = ARGV.size
-ARGV_ELEMENTS = ARGV[0..ARGV_SIZE]
-
 def main
-  ARGV_SIZE.zero? ? standard_input : argument
+  options = decision_option
+  argv_size = ARGV.size
+  count_result = execution(ARGV.size.zero? ? standard_input : filename, options)
+  display_results(count_result, argv_size)
 end
 
-def argument_lines
-  ARGV_ELEMENTS.map { |file_name| File.open(file_name).read.count("\n").to_s } if NO_OR_L
-end
-
-def argument_words
-  ARGV_ELEMENTS.map { |file_name| File.open(file_name).read.to_s.split(nil).size.to_s } if NO_OR_W
-end
-
-def argument_bytes
-  ARGV_ELEMENTS.map { |file_name| File.open(file_name).read.to_s.bytesize.to_s } if NO_OR_C
-end
-
-def argument
-  results = [argument_lines, argument_words, argument_bytes].compact
-
-  argument_results = results.map { |ar| ar.map { |arm| arm.to_s.rjust(8) } }
-  argument_results << ARGV.map { |am| " #{am.ljust(ARGV_SIZE)}" }
-  argument_results.transpose.map { |art| puts art.join('') }
-
-  puts "#{results.map { |ft| ft.map(&:to_i).sum.to_s.rjust(8) }.join('')} total" if ARGV_SIZE > 1
+def decision_option
+  option = ARGV.getopts('l', 'w', 'c')
+  no_option = { 'l' => true, 'w' => true, 'c' => true }
+  option.value?(true) ? option : no_option
 end
 
 def standard_input
-  input = $stdin.readlines
+  $stdin.readlines
+end
 
-  input_lines = input.size if NO_OR_L
+def filename
+  ARGV.map { |file_name| File.open(file_name).read.to_s }
+end
 
-  input_words = input.join('').split(' ' || "\n").size.to_s if NO_OR_W
+def execution(argument, options)
+  results = []
+  n = 0
+  argument.each do |file|
+    results << file.split("\n").size if options['l']
+    results << file.split(nil).size if options['w']
+    results << file.bytesize if options['c']
+    results << " #{ARGV[n]}\n"
+    n += 1
+  end
+  results
+end
 
-  input_bytes = input.join('').bytesize.to_s if NO_OR_C
-
-  [input_lines, input_words, input_bytes].compact.map { |tr| print tr.to_s.rjust(8) }
+def display_results(count_result, argv_size)
+  divisor = argv_size.zero? ? count_result.count(" \n") : argv_size
+  total_preparation = count_result.each_slice(count_result.size / divisor).to_a.transpose
+  total_preparation.pop
+  total_results = total_preparation.map { |t| t.map(&:to_i).sum.to_s.rjust(8) }.join('')
+  if argv_size >= 1
+    print count_result.map { |r| r.to_s.rjust(8) }.join('')
+    print "#{total_results} total"
+  else
+    print total_results
+  end
 end
 
 main
