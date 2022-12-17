@@ -4,63 +4,64 @@
 require 'optparse'
 
 def main
-  option = decide_option
-  argv_size = ARGV.size
-  count_target = format_count_target(argv_size)
-  display_result(count_target, option)
-  display_total(count_target, option) if argv_size > 1
+  option = parse_option
+  count_hash = build_count_hash
+  result_array = build_result_array(count_hash, option)
+  display_total(result_array, option) if count_hash.size > 1
 end
 
-def decide_option
+def parse_option
   option = ARGV.getopts('l', 'w', 'c')
   no_option = { 'l' => true, 'w' => true, 'c' => true }
   option.value?(true) ? option : no_option
 end
 
-def format_count_target(argv_size)
-  if argv_size.zero?
+def build_count_hash
+  if ARGV.size.zero?
     content = $stdin.read
     { '' => content }
   else
-    contents = ARGV.map { |file_name| File.open(file_name).read }
+    contents = ARGV.map { |file_name| File.read(file_name) }
     ARGV.zip(contents).to_h
   end
 end
 
-def count_line(target_content)
-  target_content.split("\n").size
-end
-
-def count_word(target_content)
-  target_content.split(nil).size
-end
-
-def count_byte(target_content)
-  target_content.bytesize
-end
-
-def display_result(count_target, option)
-  count_target.each do |file_name, target_content|
-    print count_line(target_content).to_s.rjust(8) if option['l']
-    print count_word(target_content).to_s.rjust(8) if option['w']
-    print count_byte(target_content).to_s.rjust(8) if option['c']
-    print " #{file_name}\n"
+def build_result_array(count_hash, option)
+  result_array = []
+  count_hash.each do |file_name, file_content|
+    result_hash = {}
+    result_hash[:line] = count_line(file_content) if option['l']
+    result_hash[:word] = count_word(file_content) if option['w']
+    result_hash[:byte] = count_byte(file_content) if option['c']
+    result_hash[:file] = " #{file_name}\n"
+    result_hash.each_value { |value| print value.to_s.rjust(8) }
+    if count_hash.size > 1
+      result_hash.delete(:file)
+      result_array << result_hash
+    end
   end
+  result_array
 end
 
-def display_total(count_target, option)
-  line_number = 0
-  word_number = 0
-  byte_number = 0
-  count_target.each_value do |target_content|
-    line_number += count_line(target_content)
-    word_number += count_word(target_content)
-    byte_number += count_byte(target_content)
-  end
-  line_number_display = line_number.to_s.rjust(8) if option['l']
-  word_number_display = word_number.to_s.rjust(8) if option['w']
-  byte_number_display = byte_number.to_s.rjust(8) if option['c']
-  print "#{line_number_display}#{word_number_display}#{byte_number_display} total"
+def display_total(result_array, option)
+  total_array = []
+  total_array << result_array.inject(0) { |sum, hash| sum + hash[:line] } if option['l']
+  total_array << result_array.inject(0) { |sum, hash| sum + hash[:word] } if option['w']
+  total_array << result_array.inject(0) { |sum, hash| sum + hash[:byte] } if option['c']
+  total_array.each { |total_number| print total_number.to_s.rjust(8) }
+  print ' total'
+end
+
+def count_line(file_content)
+  file_content.split("\n").size
+end
+
+def count_word(file_content)
+  file_content.split(nil).size
+end
+
+def count_byte(file_content)
+  file_content.bytesize
 end
 
 main
