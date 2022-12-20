@@ -5,9 +5,10 @@ require 'optparse'
 
 def main
   option = parse_option
-  count_hash = build_count_hash
-  result_array = build_result_array(count_hash, option)
-  display_total(result_array, option) if count_hash.size > 1
+  contents_by_file_name = build_contents_by_file_name
+  count_data_list = build_count_data_list(contents_by_file_name, option)
+  total_numbers = build_total_numbers(count_data_list, option) if contents_by_file_name.size > 1
+  build_display_format(count_data_list, total_numbers)
 end
 
 def parse_option
@@ -16,7 +17,7 @@ def parse_option
   option.value?(true) ? option : no_option
 end
 
-def build_count_hash
+def build_contents_by_file_name
   if ARGV.size.zero?
     content = $stdin.read
     { '' => content }
@@ -26,30 +27,17 @@ def build_count_hash
   end
 end
 
-def build_result_array(count_hash, option)
-  result_array = []
-  count_hash.each do |file_name, file_content|
+def build_count_data_list(contents_by_file_name, option)
+  count_data_list = []
+  contents_by_file_name.each do |file_name, file_content|
     result_hash = {}
     result_hash[:line] = count_line(file_content) if option['l']
     result_hash[:word] = count_word(file_content) if option['w']
     result_hash[:byte] = count_byte(file_content) if option['c']
-    result_hash[:file] = " #{file_name}\n"
-    result_hash.each_value { |value| print value.to_s.rjust(8) }
-    if count_hash.size > 1
-      result_hash.delete(:file)
-      result_array << result_hash
-    end
+    result_hash[:file] = file_name
+    count_data_list << result_hash
   end
-  result_array
-end
-
-def display_total(result_array, option)
-  total_array = []
-  total_array << result_array.inject(0) { |sum, hash| sum + hash[:line] } if option['l']
-  total_array << result_array.inject(0) { |sum, hash| sum + hash[:word] } if option['w']
-  total_array << result_array.inject(0) { |sum, hash| sum + hash[:byte] } if option['c']
-  total_array.each { |total_number| print total_number.to_s.rjust(8) }
-  print ' total'
+  count_data_list
 end
 
 def count_line(file_content)
@@ -57,11 +45,32 @@ def count_line(file_content)
 end
 
 def count_word(file_content)
-  file_content.split(nil).size
+  file_content.split(' ').size
 end
 
 def count_byte(file_content)
   file_content.bytesize
+end
+
+def build_total_numbers(count_data_list, option)
+  total_hash = {}
+  total_hash[:line] = count_data_list.sum { |hash| hash[:line] } if option['l']
+  total_hash[:word] = count_data_list.sum { |hash| hash[:word] } if option['w']
+  total_hash[:byte] = count_data_list.sum { |hash| hash[:byte] } if option['c']
+  total_hash
+end
+
+def build_display_format(count_data_list, total_numbers)
+  count_data_list_with_file_name = count_data_list.each { |hash| hash[:file] = "#{hash[:file]}\n" }
+  count_data_list_with_file_name.each { |result| display_specified_contents(result.values) }
+  return unless total_numbers
+
+  display_specified_contents(total_numbers.values)
+  print ' total'
+end
+
+def display_specified_contents(specified_contents)
+  specified_contents.each { |content| print " #{content}".rjust(8) }
 end
 
 main
