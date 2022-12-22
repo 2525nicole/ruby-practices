@@ -6,9 +6,9 @@ require 'optparse'
 def main
   option = parse_option
   contents_by_file_name = build_contents_by_file_name
-  count_data_list = build_count_data_list(contents_by_file_name, option)
-  total_numbers = build_total_numbers(count_data_list, option) if contents_by_file_name.size > 1
-  build_display_format(count_data_list, total_numbers)
+  count_data_list = build_count_data_list(contents_by_file_name)
+  count_data_list << build_total_numbers(count_data_list) if count_data_list.size > 1
+  display_result(count_data_list, option)
 end
 
 def parse_option
@@ -27,17 +27,15 @@ def build_contents_by_file_name
   end
 end
 
-def build_count_data_list(contents_by_file_name, option)
-  count_data_list = []
-  contents_by_file_name.each do |file_name, file_content|
-    result_hash = {}
-    result_hash[:line] = count_line(file_content) if option['l']
-    result_hash[:word] = count_word(file_content) if option['w']
-    result_hash[:byte] = count_byte(file_content) if option['c']
-    result_hash[:file] = file_name
-    count_data_list << result_hash
+def build_count_data_list(contents_by_file_name)
+  contents_by_file_name.map do |file_name, file_content|
+    [
+      line: count_line(file_content),
+      word: count_word(file_content),
+      byte: count_byte(file_content),
+      file: file_name
+    ].flatten
   end
-  count_data_list
 end
 
 def count_line(file_content)
@@ -52,25 +50,22 @@ def count_byte(file_content)
   file_content.bytesize
 end
 
-def build_total_numbers(count_data_list, option)
-  total_hash = {}
-  total_hash[:line] = count_data_list.sum { |hash| hash[:line] } if option['l']
-  total_hash[:word] = count_data_list.sum { |hash| hash[:word] } if option['w']
-  total_hash[:byte] = count_data_list.sum { |hash| hash[:byte] } if option['c']
-  total_hash
+def build_total_numbers(count_data_list)
+  {
+    line: count_data_list.sum { |hash| hash[:line] },
+    word: count_data_list.sum { |hash| hash[:word] },
+    byte: count_data_list.sum { |hash| hash[:byte] },
+    file: 'total'
+  }
 end
 
-def build_display_format(count_data_list, total_numbers)
-  count_data_list_with_file_name = count_data_list.each { |hash| hash[:file] = "#{hash[:file]}\n" }
-  count_data_list_with_file_name.each { |result| display_specified_contents(result.values) }
-  return unless total_numbers
-
-  display_specified_contents(total_numbers.values)
-  print ' total'
-end
-
-def display_specified_contents(specified_contents)
-  specified_contents.each { |content| print " #{content}".rjust(8) }
+def display_result(count_data_list, option)
+  count_data_list.each do |result|
+    print result[:line].to_s.rjust(8) if option['l']
+    print result[:word].to_s.rjust(8) if option['w']
+    print result[:byte].to_s.rjust(8) if option['c']
+    puts " #{result[:file]}"
+  end
 end
 
 main
