@@ -8,7 +8,7 @@ def main
   contents_by_file_name = build_contents_by_file_name
   count_data_list = build_count_data_list(contents_by_file_name)
   count_data_list << build_total_numbers(count_data_list) if count_data_list.size > 1
-  display_result(count_data_list, option)
+  display_results(count_data_list, option)
 end
 
 def parse_option
@@ -29,12 +29,12 @@ end
 
 def build_count_data_list(contents_by_file_name)
   contents_by_file_name.map do |file_name, file_content|
-    [
+    {
       line: count_line(file_content),
       word: count_word(file_content),
       byte: count_byte(file_content),
       file: file_name
-    ].flatten
+    }
   end
 end
 
@@ -59,7 +59,7 @@ def build_total_numbers(count_data_list)
   }
 end
 
-def display_result(count_data_list, option)
+def display_results(count_data_list, option)
   count_data_list.each do |result|
     print result[:line].to_s.rjust(8) if option['l']
     print result[:word].to_s.rjust(8) if option['w']
