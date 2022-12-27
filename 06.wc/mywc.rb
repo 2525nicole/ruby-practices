@@ -61,16 +61,15 @@ end
 
 def display_results(count_data_list, option)
   count_data_list.each do |result|
-    result_to_display = result.map { |key, val| [key, judge_value(key, val)] }.to_h
-    print result_to_display[:line] if option['l']
-    print result_to_display[:word] if option['w']
-    print result_to_display[:byte] if option['c']
-    puts " #{result_to_display[:file]}"
+    print format_value(result[:line]) if option['l']
+    print format_value(result[:word]) if option['w']
+    print format_value(result[:byte]) if option['c']
+    puts " #{result[:file]}"
   end
 end
 
-def judge_value(key, value)
-  key == :file ? value : value.to_s.rjust(8)
+def format_value(value)
+  value.to_s.rjust(8)
 end
 
 main
