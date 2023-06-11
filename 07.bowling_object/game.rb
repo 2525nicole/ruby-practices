@@ -1,11 +1,11 @@
 class Game
   def initialize(entered_marks)
     @frames = []
-    mark_numbers = complement_marks(entered_marks)
-    create_frames(mark_numbers)
+    digits_aligned_marks = align_mark_digits(entered_marks)
+    create_frames(digits_aligned_marks)
   end
 
-  def complement_marks(entered_marks)
+  def align_mark_digits(entered_marks)
     @marks = []
     entered_marks.split(',').each do |m|
       if m == 'X'
@@ -19,7 +19,7 @@ class Game
   end
 
   def create_frames(marks)
-    marks[0..17].each_slice(2) { |a| @frames << Frame.new(a[0], a[1]) }
+    marks[0..17].each_slice(2) { |m| @frames << Frame.new(m[0], m[1]) }
     last_frame = marks[18..@marks.length]
     last_frame.delete(0)
     @frames << Frame.new(last_frame[0], last_frame[1], last_frame[2])
