@@ -27,27 +27,31 @@ class Game
     @frames << Frame.new(last_frame[0], last_frame[1], last_frame[2])
   end
 
-  def calc_scores #1
-    n = 0
+  def calc_scores
+    num = 0
     total = 0
     @frames.each do |frame|
-      non_last_frame = n <= 8
-      strike = frame.first_shot.score == 10
-      double = non_last_frame && strike && @frames[n + 1].first_shot.score == 10
-      spare = !strike && frame.calc_frame_scores == 10 #1
-
       total +=
-        if double #1
-          10 + @frames[n + 1].first_shot.score + (@frames[n + 2].nil? ? @frames[n + 1].second_shot.score : @frames[n + 2].first_shot.score) #1
-        elsif non_last_frame && strike #2
-          10 + @frames[n + 1].first_shot.score + @frames[n + 1].second_shot.score
-        elsif non_last_frame && spare #2
-          10 + @frames[n + 1].first_shot.score
-        else #1
+        if num <= 8 && frame.calc_frame_scores == 10
+          strike = frame.first_shot.score == 10
+          double = strike && @frames[num + 1].first_shot.score == 10
+          spare = !strike && frame.calc_frame_scores == 10
+          calc_bonus_score(strike, double, spare, num)
+        else
           frame.calc_frame_scores
         end
-      n += 1
+      num += 1
     end
     puts total
+  end
+
+  def calc_bonus_score(strike, double, spare, num)
+    if double
+      10 + @frames[num + 1].first_shot.score + (@frames[num + 2].nil? ? @frames[num + 1].second_shot.score : @frames[num + 2].first_shot.score)
+    elsif strike
+      10 + @frames[num + 1].first_shot.score + @frames[num + 1].second_shot.score
+    elsif spare
+      10 + @frames[num + 1].first_shot.score
+    end
   end
 end
