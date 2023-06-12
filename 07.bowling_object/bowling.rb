@@ -5,4 +5,4 @@ require './frame'
 require './game'
 
 game = Game.new(ARGV[0])
-game.calc_scores
+game.show_score

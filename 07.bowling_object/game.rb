@@ -3,11 +3,11 @@
 class Game
   def initialize(entered_marks)
     @frames = []
-    digits_aligned_marks = align_mark_digits(entered_marks)
+    digits_aligned_marks = align_digits(entered_marks)
     create_frames(digits_aligned_marks)
   end
 
-  def align_mark_digits(entered_marks)
+  def align_digits(entered_marks)
     @marks = []
     entered_marks.split(',').each do |m|
       if m == 'X'
@@ -27,31 +27,14 @@ class Game
     @frames << Frame.new(last_frame[0], last_frame[1], last_frame[2])
   end
 
-  def calc_scores
-    num = 0
+  def show_score
+    index = 0
     total = 0
     @frames.each do |frame|
       total +=
-        if num <= 8 && frame.calc_frame_scores == 10
-          strike = frame.first_shot.score == 10
-          double = strike && @frames[num + 1].first_shot.score == 10
-          spare = !strike && frame.calc_frame_scores == 10
-          calc_bonus_score(strike, double, spare, num)
-        else
-          frame.calc_frame_scores
-        end
-      num += 1
+        frame.calc_scores(index, @frames)
+      index += 1
     end
     puts total
-  end
-
-  def calc_bonus_score(strike, double, spare, num)
-    if double
-      10 + @frames[num + 1].first_shot.score + (@frames[num + 2].nil? ? @frames[num + 1].second_shot.score : @frames[num + 2].first_shot.score)
-    elsif strike
-      10 + @frames[num + 1].first_shot.score + @frames[num + 1].second_shot.score
-    elsif spare
-      10 + @frames[num + 1].first_shot.score
-    end
   end
 end
