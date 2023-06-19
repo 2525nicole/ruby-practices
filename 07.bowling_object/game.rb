@@ -33,7 +33,8 @@ class Game
         if frame_number <= 9 && frame.calc_regular_scores == 10
           next_frame = @frames[frame_number]
           after_next_frame = @frames[frame_number + 1]
-          frame.calc_bonus_scores(frame_number, next_frame, after_next_frame)
+          frame.calc_bonus_scores(next_frame, after_next_frame)
+          # (10 + frame.calc_bonus_scores(next_frame, after_next_frame))
         else
           frame.calc_regular_scores
         end
