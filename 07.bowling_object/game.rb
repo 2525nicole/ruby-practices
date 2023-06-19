@@ -8,21 +8,21 @@ class Game
   end
 
   def align_digits(entered_marks)
-    @marks = []
+    marks = []
     entered_marks.split(',').each do |m|
       if m == 'X'
-        @marks << m
-        @marks << 0
+        marks << m
+        marks << 0
       else
-        @marks << m
+        marks << m
       end
     end
-    @marks
+    marks
   end
 
   def create_frames(marks)
     marks[0..17].each_slice(2) { |m| @frames << Frame.new(m[0], m[1]) }
-    last_frame = marks[18..@marks.length]
+    last_frame = marks[18..marks.length]
     last_frame.delete(0)
     @frames << Frame.new(last_frame[0], last_frame[1], last_frame[2])
   end
