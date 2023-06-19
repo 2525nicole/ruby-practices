@@ -28,13 +28,10 @@ class Game
   end
 
   def show_score
-    index = 0
-    total = 0
-    @frames.each do |frame|
-      total +=
-        frame.calc_scores(index, @frames)
-      index += 1
-    end
+    total =
+      @frames.each.with_index(1).sum do |frame, frame_number|
+        frame.calc_scores(frame_number, @frames)
+      end
     puts total
   end
 end
