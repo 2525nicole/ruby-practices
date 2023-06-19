@@ -31,6 +31,6 @@ class Frame
   end
 
   def calc_regular_scores
-    [@first_shot.score, @second_shot.score, @third_shot.score].sum
+    [@first_shot, @second_shot, @third_shot].map(&:score).sum
   end
 end
