@@ -25,7 +25,7 @@ class Frame
   end
 
   def double?(next_frame)
-    strike? && next_frame.first_shot.score == 10
+    strike? && next_frame.strike?
   end
 
   def next_point(next_frame)
