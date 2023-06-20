@@ -24,7 +24,7 @@ class Game
     marks[0..17].each_slice(2) { |m| @frames << Frame.new(m[0], m[1]) }
     last_frame = marks[18..marks.length]
     last_frame.delete(0)
-    @frames << Frame.new(last_frame[0], last_frame[1], last_frame[2])
+    @frames << Frame.new(*last_frame)
   end
 
   def show_score
