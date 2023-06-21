@@ -10,15 +10,15 @@ class Frame
   end
 
   def calc_scores(next_frame, after_next_frame = nil)
-    if next_frame != nil && calc_regular_scores == 10
-    10 +
-      if double?(next_frame)
-        next_point(next_frame) + (after_next_frame.nil? ? next_frame.second_shot.score : after_next_frame.first_shot.score)
-      elsif strike?
-        next_point(next_frame) + next_frame.second_shot.score
-      else
-        next_point(next_frame)
-      end
+    if !next_frame = nil && calc_regular_scores == 10
+      10 +
+        if double?(next_frame)
+          next_point(next_frame) + (after_next_frame.nil? ? next_frame.second_shot.score : after_next_frame.first_shot.score)
+        elsif strike?
+          next_point(next_frame) + next_frame.second_shot.score
+        else
+          next_point(next_frame)
+        end
     else
       calc_regular_scores
     end

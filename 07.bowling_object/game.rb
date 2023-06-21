@@ -30,9 +30,9 @@ class Game
   def show_score
     total =
       @frames.each.with_index(1).sum do |frame, frame_number|
-          next_frame = @frames[frame_number]
-          after_next_frame = @frames[frame_number + 1]
-          frame.calc_scores(next_frame, after_next_frame)
+        next_frame = @frames[frame_number]
+        after_next_frame = @frames[frame_number + 1]
+        frame.calc_scores(next_frame, after_next_frame)
       end
     puts total
   end
