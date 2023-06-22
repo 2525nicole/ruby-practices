@@ -21,7 +21,7 @@ class Game
   end
 
   def create_frames(marks)
-    marks[0..17].each_slice(2) { |m| @frames << Frame.new(m[0], m[1]) }
+    marks[0..17].each_slice(2) { |m| @frames << Frame.new(*m) }
     last_frame = marks[18..marks.length]
     last_frame.delete(0)
     @frames << Frame.new(*last_frame)
