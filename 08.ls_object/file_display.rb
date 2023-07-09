@@ -5,15 +5,15 @@ class FileDisplay
     @displayed_file_information = args[:displayed_file_information]
     options = args[:options]
     if options['l']
-      @formated_file_details = format_file_details
+      @formatted_file_details = format_file_details
     else
-      @formated_file_names = format_file_names
+      @formatted_file_names = format_file_names
     end
   end
 
   def display_details
     puts "total #{calc_total_blocks}"
-    @formated_file_details.each do |d|
+    @formatted_file_details.each do |d|
       displayed_result = []
       d.each do |k, v|
         next if k == :block_number
@@ -25,7 +25,7 @@ class FileDisplay
   end
 
   def display_file_names
-    @formated_file_names.transpose.map { |n| puts n.join(' ') }
+    @formatted_file_names.transpose.map { |n| puts n.join(' ') }
   end
 
   private
