@@ -46,8 +46,7 @@ class FileDetail
   end
 
   def obtain_time_stamp
-    # @file_stat.mtime.strftime('%_m %_d %R')
-    @file_stat.mtime#.strftime('%_m %_d %R')
+    @file_stat.mtime
   end
 
   def obtain_file_name_and_symlink

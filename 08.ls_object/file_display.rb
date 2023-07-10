@@ -25,7 +25,7 @@ class FileDisplay
     @formatted_file_names.transpose.map { |n| puts n.join(' ') }
   end
 
-  # private
+  private
 
   def calc_total_blocks
     @file_details.map { |f| f[:block_number] }.sum
