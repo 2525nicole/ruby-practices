@@ -4,13 +4,11 @@ class FileDisplay
   def initialize(file_names:, file_details:)
     @file_names = file_names
     @file_details = file_details
-    @formatted_file_details = format_file_details
-    @formatted_file_names = format_file_names
   end
 
   def display_details
     puts "total #{calc_total_blocks}"
-    @formatted_file_details.each do |d|
+    format_file_details.each do |d|
       displayed_result = []
       d.each do |k, v|
         next if k == :block_number
@@ -22,7 +20,7 @@ class FileDisplay
   end
 
   def display_file_names
-    @formatted_file_names.transpose.map { |n| puts n.join(' ') }
+    format_file_names.transpose.map { |n| puts n.join(' ') }
   end
 
   private

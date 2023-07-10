@@ -3,11 +3,6 @@
 class FileDetail
   require 'etc'
 
-  def initialize(file_name:)
-    @file_name = file_name
-    @file_stat = File.lstat(file_name)
-  end
-
   FILETYPES_LIST = {
     'file' => '-',
     'directory' => 'd',
@@ -24,6 +19,11 @@ class FileDetail
     '6' => 'rw-',
     '7' => 'rwx'
   }.freeze
+
+  def initialize(file_name:)
+    @file_name = file_name
+    @file_stat = File.lstat(file_name)
+  end
 
   def obtain_permission
     [FILETYPES_LIST[@file_stat.ftype], @file_stat.mode.to_s(8).slice(-3..-1).chars.map { |char| PERMISSION_LIST[char] }].join

@@ -8,14 +8,13 @@ require_relative './file_detail'
 options = ARGV.getopts('a', 'r', 'l')
 file_list = FileList.new(a_option: options['a'], r_option: options['r'])
 file_names = file_list.file_names_list
+file_details = file_list.file_details_list
 
 return if file_names.empty?
 
-file_details = file_list.file_details_list
-
-displayed_details_list = FileDisplay.new(file_names:, file_details:)
+displayed_file_information = FileDisplay.new(file_names:, file_details:) # ここの変数名を修正する
 if options['l']
-  displayed_details_list.display_details
+  displayed_file_information.display_details
 else
-  displayed_details_list.display_file_names
+  displayed_file_information.display_file_names
 end
