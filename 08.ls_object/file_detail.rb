@@ -3,15 +3,20 @@
 class FileDetail
   require 'etc'
 
-  attr_reader :file_detail
+  # attr_reader :file_detail
 
-  def initialize(args)
-    @file_name = args[:file_name]
-    @file_stat = args[:file_stat]
-    @file_detail = build_file_detail
+  # def initialize(args)
+  #   @file_name = args[:file_name]
+  #   @file_stat = args[:file_stat]
+  #   @file_detail = build_file_detail
+  # end
+
+  def initialize(file_name:)
+    @file_name = file_name
+    @file_stat = File.lstat(file_name)
   end
 
-  private
+  # private
 
   FILETYPES_LIST = {
     'file' => '-',
@@ -30,16 +35,16 @@ class FileDetail
     '7' => 'rwx'
   }.freeze
 
-  def build_file_detail
-    { permission: obtain_permission,
-      hardlink_number: obtain_hardlink_number,
-      owner: obtain_owner,
-      group: obtain_group,
-      filesize: obtain_filesize,
-      time_stamp: obtain_time_stamp,
-      name_and_symlink: obtain_file_name_and_symlink,
-      block_number: obtain_block_number }
-  end
+  # def build_file_detail
+  #   { permission: obtain_permission,
+  #     hardlink_number: obtain_hardlink_number,
+  #     owner: obtain_owner,
+  #     group: obtain_group,
+  #     filesize: obtain_filesize,
+  #     time_stamp: obtain_time_stamp,
+  #     name_and_symlink: obtain_file_name_and_symlink,
+  #     block_number: obtain_block_number }
+  # end
 
   def obtain_permission
     [FILETYPES_LIST[@file_stat.ftype], @file_stat.mode.to_s(8).slice(-3..-1).chars.map { |char| PERMISSION_LIST[char] }].join
@@ -62,7 +67,8 @@ class FileDetail
   end
 
   def obtain_time_stamp
-    @file_stat.mtime.strftime('%_m %_d %R')
+    # @file_stat.mtime.strftime('%_m %_d %R')
+    @file_stat.mtime#.strftime('%_m %_d %R')
   end
 
   def obtain_file_name_and_symlink
