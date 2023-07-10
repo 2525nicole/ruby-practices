@@ -3,11 +3,6 @@
 class FileList
   attr_reader :file_names_list, :file_details_list
 
-  # def initialize
-  #   @file_names_list = build_file_names_list
-  #   @file_details_list = build_file_details_list
-  # end
-
   def initialize(a_option:, r_option:)
     @a_option = a_option
     @r_option = r_option
@@ -21,16 +16,6 @@ class FileList
     file_names = Dir.glob('*', @a_option ? File::FNM_DOTMATCH : 0).sort
     @r_option ? file_names.reverse : file_names
   end
-
-  # def build_file_details_list
-  #   file_details_array = []
-  #   @file_names_list.each do |file_name|
-  #     # file_detail_hash = FileDetail.new(file_name:, file_stat: File.lstat(file_name)).file_detail これはbefore
-  #     file_detail_hash = FileDetail.new(file_name: file_name).file_detail
-  #     file_details_array << file_detail_hash
-  #   end
-  #   file_details_array
-  # end
 
   def build_file_details_list
     file_details_array = []
