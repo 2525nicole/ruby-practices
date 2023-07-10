@@ -11,15 +11,7 @@ file_names = file_list.file_names_list
 
 return if file_names.empty?
 
-file_details = file_list.file_details_list # lオプション有無の条件分岐から外す
-
-# if options['l']
-#   displayed_details_list = FileDisplay.new(displayed_file_information: file_details, options: options)
-#   displayed_details_list.display_details
-# else
-#   display_names_list = FileDisplay.new(displayed_file_information: file_names, options: options)
-#   display_names_list.display_file_names
-# end
+file_details = file_list.file_details_list
 
 displayed_details_list = FileDisplay.new(file_names:, file_details:)
 if options['l']

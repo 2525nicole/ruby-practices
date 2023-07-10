@@ -2,14 +2,6 @@
 
 class FileDisplay
   def initialize(file_names:, file_details:)
-    # @displayed_file_information = args[:displayed_file_information]
-    # options = args[:options]
-    # if options['l']
-      # @formatted_file_details = format_file_details
-    # else
-    #   @formatted_file_names = format_file_names
-    # end
-
     @file_names = file_names
     @file_details = file_details
     @formatted_file_details = format_file_details
@@ -36,12 +28,10 @@ class FileDisplay
   # private
 
   def calc_total_blocks
-    # @displayed_file_information.map { |f| f[:block_number] }.sum
     @file_details.map { |f| f[:block_number] }.sum
   end
 
   def format_file_details
-    # file_details_hash = @displayed_file_information
     file_details_hash = @file_details
     right_alignment_targets = :hardlink_number, :filesize
     left_alignment_targets = :owner, :group
@@ -89,7 +79,6 @@ class FileDisplay
     columns_width = calc_columns_width(display_width, columns_number)
     rows_number = calc_rows_number(columns_number)
 
-    # left_alignment_file_names = @displayed_file_information.map { |d| d.ljust(columns_width - 1) }
     left_alignment_file_names = @file_names.map { |d| d.ljust(columns_width - 1) }
     file_names_per_rows = left_alignment_file_names.each_slice(rows_number).to_a
     file_names_per_rows.map { |element| element.values_at(0...rows_number) }
@@ -100,7 +89,6 @@ class FileDisplay
   end
 
   def calc_columns_number(max_columns, display_width)
-    # longest_name_size = @displayed_file_information.max_by(&:size).size
     longest_name_size = @file_names.max_by(&:size).size
     minus_columns = (0...max_columns).find { longest_name_size < display_width / (max_columns - _1) } || max_columns - 1
     max_columns - minus_columns
@@ -111,7 +99,6 @@ class FileDisplay
   end
 
   def calc_rows_number(columns_number)
-    # (@displayed_file_information.size / columns_number.to_f).ceil
     (@file_names.size / columns_number.to_f).ceil
   end
 end
