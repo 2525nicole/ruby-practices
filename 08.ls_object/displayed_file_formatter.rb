@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DisplayedFileInformation
+class DisplayedFileFormatter
   def initialize(file_names:, file_details:)
     @file_names = file_names
     @file_details = file_details

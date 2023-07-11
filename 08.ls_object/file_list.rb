@@ -18,7 +18,7 @@ class FileList
   end
 
   def build_file_details_list
-    file_details_array = []
+    file_details = []
     @file_names_list.each do |file_name|
       file_detail = FileDetail.new(file_name:)
       file_detail_hash = {
@@ -31,8 +31,8 @@ class FileList
         name_and_symlink: file_detail.obtain_file_name_and_symlink,
         block_number: file_detail.obtain_block_number
       }
-      file_details_array << file_detail_hash
+      file_details << file_detail_hash
     end
-    file_details_array
+    file_details
   end
 end
