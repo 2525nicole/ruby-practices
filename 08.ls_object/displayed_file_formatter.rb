@@ -1,21 +1,22 @@
 # frozen_string_literal: true
 
 class DisplayedFileFormatter
-  def initialize(file_names:, file_details:)
-    @file_names = file_names
+  def initialize(file_details:)
     @file_details = file_details
   end
 
   def display_details
     puts "total #{calc_total_blocks}"
-    format_file_details.each do |d|
-      displayed_result = []
-      d.each do |k, v|
-        next if k == :block_number
-
-        displayed_result << v
-      end
-      puts displayed_result.join(' ')
+    @file_details.map do |file_detail|
+      file_detail =
+        { permission: "#{file_detail.obtain_permission}  ",
+          hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(@file_details.map(&:obtain_hardlink_number))),
+          owner: "#{file_detail.obtain_owner} ".ljust(find_max_size(@file_details.map(&:obtain_owner))),
+          group: "#{file_detail.obtain_group} ".ljust(find_max_size(@file_details.map(&:obtain_group))),
+          filesize: file_detail.obtain_filesize.rjust(find_max_size(@file_details.map(&:obtain_filesize))),
+          time_stamp: file_detail.obtain_time_stamp.strftime('%_m %_d %R'),
+          file_name_and_symlink: file_detail.obtain_file_name_and_symlink }
+      puts file_detail.values.join(' ')
     end
   end
 
@@ -26,48 +27,11 @@ class DisplayedFileFormatter
   private
 
   def calc_total_blocks
-    @file_details.map { |f| f[:block_number] }.sum
+    @file_details.map(&:obtain_block_number).sum
   end
 
-  def format_file_details
-    file_details_hash = @file_details
-    right_alignment_targets = :hardlink_number, :filesize
-    left_alignment_targets = :owner, :group
-    align_values_right(file_details_hash, right_alignment_targets)
-    align_values_left(file_details_hash, left_alignment_targets)
-    format_timestamp(file_details_hash, :time_stamp)
-    file_details_hash
-  end
-
-  def align_values_right(target_hash, target_key)
-    target_key.each do |k|
-      target_key = target_hash.map { |f| f[k] }
-      longest_char = target_key.map(&:size).max
-      target_hash.map do |f|
-        f[k] = " #{f[k].rjust(longest_char)}"
-      end
-    end
-  end
-
-  def align_values_left(target_hash, target_key)
-    target_key.each do |k|
-      target_key = target_hash.map { |f| f[k] }
-      longest_char = target_key.map(&:size).max
-      target_hash.map do |f|
-        f[k] =
-          if k == :group
-            " #{f[k].ljust(longest_char)}"
-          else
-            f[k].ljust(longest_char).to_s
-          end
-      end
-    end
-  end
-
-  def format_timestamp(target_hash, time_stamp)
-    target_hash.map do |f|
-      f[time_stamp] = f[time_stamp].strftime('%_m %_d %R')
-    end
+  def find_max_size(targets)
+    targets.map(&:size).max
   end
 
   def format_file_names
@@ -77,7 +41,7 @@ class DisplayedFileFormatter
     columns_width = calc_columns_width(display_width, columns_number)
     rows_number = calc_rows_number(columns_number)
 
-    left_alignment_file_names = @file_names.map { |d| d.ljust(columns_width - 1) }
+    left_alignment_file_names = @file_details.map(&:file_name).map { |d| d.ljust(columns_width - 1) }
     file_names_per_rows = left_alignment_file_names.each_slice(rows_number).to_a
     file_names_per_rows.map { |element| element.values_at(0...rows_number) }
   end
@@ -87,7 +51,7 @@ class DisplayedFileFormatter
   end
 
   def calc_columns_number(max_columns, display_width)
-    longest_name_size = @file_names.max_by(&:size).size
+    longest_name_size = find_max_size(@file_details.map(&:file_name))
     minus_columns = (0...max_columns).find { longest_name_size < display_width / (max_columns - _1) } || max_columns - 1
     max_columns - minus_columns
   end
@@ -97,6 +61,6 @@ class DisplayedFileFormatter
   end
 
   def calc_rows_number(columns_number)
-    (@file_names.size / columns_number.to_f).ceil
+    (@file_details.size / columns_number.to_f).ceil
   end
 end
