@@ -7,14 +7,13 @@ require_relative './displayed_file_formatter'
 
 options = ARGV.getopts('a', 'r', 'l')
 file_list = FileList.new(a_option: options['a'], r_option: options['r'])
-file_names = file_list.file_names_list
-file_details = file_list.file_details_list
+file_details = file_list.file_details
 
-return if file_names.empty?
+return if file_details.all? { |file| file.file_name.empty? }
 
-displayed_file_information = DisplayedFileFormatter.new(file_names:, file_details:) # ここの変数名を修正する
+fromatted_files = DisplayedFileFormatter.new(file_details:)
 if options['l']
-  displayed_file_information.display_details
+  fromatted_files.display_details
 else
-  displayed_file_information.display_file_names
+  fromatted_files.display_file_names
 end
