@@ -3,6 +3,8 @@
 class FileDetail
   require 'etc'
 
+  attr_reader :file_name
+
   FILETYPES_LIST = {
     'file' => '-',
     'directory' => 'd',
