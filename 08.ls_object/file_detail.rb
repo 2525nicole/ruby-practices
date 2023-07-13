@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class FileDetail
-  require 'etc'
+require 'etc'
 
+class FileDetail
   attr_reader :file_name
 
   FILETYPES_LIST = {
