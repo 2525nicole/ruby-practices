@@ -9,7 +9,7 @@ class DisplayedFileFormatter
     puts "total #{calc_total_blocks}"
     @file_details.map do |file_detail|
       file_detail =
-        { permission: "#{file_detail.obtain_permission}  ",
+        { permission: "#{file_detail.obtain_permission} ",
           hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(@file_details.map(&:obtain_hardlink_number))),
           owner: "#{file_detail.obtain_owner} ".ljust(find_max_size(@file_details.map(&:obtain_owner))),
           group: "#{file_detail.obtain_group} ".ljust(find_max_size(@file_details.map(&:obtain_group))),
