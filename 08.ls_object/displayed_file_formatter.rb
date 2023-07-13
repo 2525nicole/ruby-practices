@@ -7,7 +7,7 @@ class DisplayedFileFormatter
 
   def display_details
     puts "total #{calc_total_blocks}"
-    @file_details.map do |file_detail|
+    @file_details.each do |file_detail|
       file_detail =
         { permission: "#{file_detail.obtain_permission} ",
           hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(@file_details.map(&:obtain_hardlink_number))),
@@ -21,7 +21,7 @@ class DisplayedFileFormatter
   end
 
   def display_file_names
-    format_file_names.transpose.map { |n| puts n.join(' ') }
+    format_file_names.transpose.each { |n| puts n.join(' ') }
   end
 
   private
