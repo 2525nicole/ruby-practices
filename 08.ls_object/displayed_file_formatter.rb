@@ -1,27 +1,28 @@
 # frozen_string_literal: true
 
 class DisplayedFileFormatter
-  def initialize(file_details:)
+  def initialize(file_details:, l_option:)
     @file_details = file_details
+    @l_option = l_option
   end
 
-  def display_details
-    puts "total #{calc_total_blocks}"
-    @file_details.each do |file_detail|
-      file_detail =
-        { permission: "#{file_detail.obtain_permission} ",
-          hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(@file_details.map(&:obtain_hardlink_number))),
-          owner: "#{file_detail.obtain_owner} ".ljust(find_max_size(@file_details.map(&:obtain_owner))),
-          group: "#{file_detail.obtain_group} ".ljust(find_max_size(@file_details.map(&:obtain_group))),
-          filesize: file_detail.obtain_filesize.rjust(find_max_size(@file_details.map(&:obtain_filesize))),
-          time_stamp: file_detail.obtain_time_stamp.strftime('%_m %_d %R'),
-          file_name_and_symlink: file_detail.obtain_file_name_and_symlink }
-      puts file_detail.values.join(' ')
+  def display_formatted_files
+    if @l_option
+        puts "total #{calc_total_blocks}"
+        @file_details.each do |file_detail|
+          file_detail =
+            { permission: "#{file_detail.obtain_permission} ",
+              hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(@file_details.map(&:obtain_hardlink_number))),
+              owner: "#{file_detail.obtain_owner} ".ljust(find_max_size(@file_details.map(&:obtain_owner))),
+              group: "#{file_detail.obtain_group} ".ljust(find_max_size(@file_details.map(&:obtain_group))),
+              filesize: file_detail.obtain_filesize.rjust(find_max_size(@file_details.map(&:obtain_filesize))),
+              time_stamp: file_detail.obtain_time_stamp.strftime('%_m %_d %R'),
+              file_name_and_symlink: file_detail.obtain_file_name_and_symlink }
+          puts file_detail.values.join(' ')
+        end
+    else
+      format_file_names.transpose.each { |n| puts n.join(' ') }
     end
-  end
-
-  def display_file_names
-    format_file_names.transpose.each { |n| puts n.join(' ') }
   end
 
   private

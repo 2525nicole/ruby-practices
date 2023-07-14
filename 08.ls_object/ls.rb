@@ -11,9 +11,5 @@ file_details = file_list.file_details
 
 return if file_details.all? { |file| file.file_name.empty? }
 
-fromatted_files = DisplayedFileFormatter.new(file_details:)
-if options['l']
-  fromatted_files.display_details
-else
-  fromatted_files.display_file_names
-end
+displayed_files = DisplayedFileFormatter.new(file_details:, l_option: options['l'])
+displayed_files.display_formatted_files
