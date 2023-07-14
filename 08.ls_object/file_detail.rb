@@ -27,6 +27,10 @@ class FileDetail
     @file_stat = File.lstat(file_name)
   end
 
+  def obtain_block_number
+    @file_stat.blocks
+  end
+
   def obtain_permission
     [FILETYPES_LIST[@file_stat.ftype], @file_stat.mode.to_s(8).slice(-3..-1).chars.map { |char| PERMISSION_LIST[char] }].join
   end
@@ -51,11 +55,7 @@ class FileDetail
     @file_stat.mtime
   end
 
-  def obtain_file_name_and_symlink
-    FileTest.symlink?(@file_name) ? "#{@file_name} -> #{File.readlink(@file_name)}" : @file_name
-  end
-
-  def obtain_block_number
-    @file_stat.blocks
+  def obtain_symlink
+    File.readlink(@file_name)
   end
 end
