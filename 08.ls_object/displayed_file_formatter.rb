@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class DisplayedFileFormatter
-  def initialize(file_details:, l_option:)
+  def initialize(total_blocks:, file_details:, l_option:)
+    @total_blocks = total_blocks
     @file_details = file_details
     @l_option = l_option
   end
@@ -17,15 +18,15 @@ class DisplayedFileFormatter
   private
 
   def display_fromatted_details
-    puts "total #{calc_total_blocks}"
+    puts "total #{@total_blocks}"
     @file_details.each do |file_detail|
       file_detail =
-        { permission: "#{file_detail.obtain_permission} ",
-          hardlink: file_detail.obtain_hardlink_number.rjust(find_max_size(:obtain_hardlink_number)),
-          owner: "#{file_detail.obtain_owner} ".ljust(find_max_size(:obtain_owner)),
-          group: "#{file_detail.obtain_group} ".ljust(find_max_size(:obtain_group)),
-          filesize: file_detail.obtain_filesize.rjust(find_max_size(:obtain_filesize)),
-          time_stamp: file_detail.obtain_time_stamp.strftime('%_m %_d %R'),
+        { permission: "#{file_detail.permission} ",
+          hardlink: file_detail.hardlink_number.rjust(find_max_size(:hardlink_number)),
+          owner: "#{file_detail.owner} ".ljust(find_max_size(:owner)),
+          group: "#{file_detail.group} ".ljust(find_max_size(:group)),
+          filesize: file_detail.filesize.rjust(find_max_size(:filesize)),
+          time_stamp: file_detail.time_stamp.strftime('%_m %_d %R'),
           file_name_and_symlink: File.symlink?(file_detail.file_name) ? format_file_name_and_symlink(file_detail) : file_detail.file_name }
       puts file_detail.values.join(' ')
     end
@@ -35,16 +36,16 @@ class DisplayedFileFormatter
     format_file_names.transpose.each { |n| puts n.join(' ') }
   end
 
-  def calc_total_blocks
-    @file_details.map(&:obtain_block_number).sum
-  end
+  # def calc_total_blocks # 複数のファイルからデータを計算したり取得する処理は file_listにあるべき
+  #   @file_details.map(&:block_number).sum
+  # end
 
   def find_max_size(symbol = nil)
     @file_details.map(&symbol).map(&:size).max
   end
 
   def format_file_name_and_symlink(file_detail)
-    "#{file_detail.file_name} -> #{file_detail.obtain_symlink}"
+    "#{file_detail.file_name} -> #{file_detail.symlink}"
   end
 
   def format_file_names

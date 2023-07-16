@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class FileList
-  attr_reader :file_details
+  attr_reader :file_details, :total_blocks
 
   def initialize(a_option:, r_option:)
     @a_option = a_option
     @r_option = r_option
     @file_details = build_file_details
+    @total_blocks = calc_total_blocks
   end
 
   private
@@ -19,5 +20,9 @@ class FileList
       file_details << file_detail
     end
     file_details
+  end
+
+  def calc_total_blocks
+    @file_details.map(&:block_number).sum
   end
 end

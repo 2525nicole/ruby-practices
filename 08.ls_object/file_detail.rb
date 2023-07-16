@@ -27,35 +27,35 @@ class FileDetail
     @file_stat = File.lstat(file_name)
   end
 
-  def obtain_block_number
+  def block_number
     @file_stat.blocks
   end
 
-  def obtain_permission
+  def permission
     [FILETYPES_LIST[@file_stat.ftype], @file_stat.mode.to_s(8).slice(-3..-1).chars.map { |char| PERMISSION_LIST[char] }].join
   end
 
-  def obtain_hardlink_number
+  def hardlink_number
     @file_stat.nlink.to_s
   end
 
-  def obtain_owner
+  def owner
     Etc.getpwuid(@file_stat.uid).name
   end
 
-  def obtain_group
+  def group
     Etc.getgrgid(@file_stat.gid).name.to_s
   end
 
-  def obtain_filesize
+  def filesize
     @file_stat.size.to_s
   end
 
-  def obtain_time_stamp
+  def time_stamp
     @file_stat.mtime
   end
 
-  def obtain_symlink
+  def symlink
     File.readlink(@file_name)
   end
 end
