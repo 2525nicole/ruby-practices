@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class DisplayedFileFormatter
-  def initialize(total_blocks:, file_details:, l_option:)
-    @total_blocks = total_blocks
-    @file_details = file_details
+  def initialize(file_list:, l_option:)
     @l_option = l_option
+    @file_details = file_list.file_details
+    @total_blocks = file_list.total_blocks
   end
 
   def display_formatted_files
@@ -35,10 +35,6 @@ class DisplayedFileFormatter
   def display_fromatted_file_names
     format_file_names.transpose.each { |n| puts n.join(' ') }
   end
-
-  # def calc_total_blocks # 複数のファイルからデータを計算したり取得する処理は file_listにあるべき
-  #   @file_details.map(&:block_number).sum
-  # end
 
   def find_max_size(symbol = nil)
     @file_details.map(&symbol).map(&:size).max
