@@ -44,7 +44,7 @@ class FileDetail
   end
 
   def group
-    Etc.getgrgid(@file_stat.gid).name.to_s
+    Etc.getgrgid(@file_stat.gid).name
   end
 
   def filesize
