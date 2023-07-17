@@ -46,31 +46,19 @@ class DisplayedFileFormatter
 
   def format_file_names
     max_columns = 3
-    display_width = find_display_width
+    display_width = `tput cols`.to_i
     columns_number = calc_columns_number(max_columns, display_width)
-    columns_width = calc_columns_width(display_width, columns_number)
-    rows_number = calc_rows_number(columns_number)
+    columns_width = display_width / columns_number
+    rows_number = (@file_details.size / columns_number.to_f).ceil
 
     left_alignment_file_names = @file_details.map(&:file_name).map { |d| d.ljust(columns_width - 1) }
     file_names_per_rows = left_alignment_file_names.each_slice(rows_number).to_a
     file_names_per_rows.map { |element| element.values_at(0...rows_number) }
   end
 
-  def find_display_width
-    `tput cols`.to_i
-  end
-
   def calc_columns_number(max_columns, display_width)
     longest_name_size = find_max_size(:file_name)
     minus_columns = (0...max_columns).find { longest_name_size < display_width / (max_columns - _1) } || max_columns - 1
     max_columns - minus_columns
-  end
-
-  def calc_columns_width(display_width, columns_number)
-    display_width / columns_number
-  end
-
-  def calc_rows_number(columns_number)
-    (@file_details.size / columns_number.to_f).ceil
   end
 end
