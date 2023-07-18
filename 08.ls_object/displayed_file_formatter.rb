@@ -2,6 +2,7 @@
 
 class DisplayedFileFormatter
   def initialize(file_list:, l_option:)
+    @file_list = file_list
     @l_option = l_option
     @file_details = file_list.file_details
     @total_blocks = file_list.total_blocks
@@ -22,10 +23,14 @@ class DisplayedFileFormatter
     @file_details.each do |file_detail|
       file_detail =
         { permission: "#{file_detail.permission} ",
-          hardlink: file_detail.hardlink_number.rjust(find_max_size(:hardlink_number)),
-          owner: "#{file_detail.owner} ".ljust(find_max_size(:owner)),
-          group: "#{file_detail.group} ".ljust(find_max_size(:group)),
-          filesize: file_detail.filesize.rjust(find_max_size(:filesize)),
+          # hardlink: file_detail.hardlink_number.rjust(@file_list.find_max_size(targets: @file_details, symbol: :hardlink_number)),
+          hardlink: file_detail.hardlink_number.rjust(find_max_size(symbol: :hardlink_number)),
+          # owner: "#{file_detail.owner} ".ljust(@file_list.find_max_size(targets: @file_details, symbol: :owner)),
+          owner: "#{file_detail.owner} ".rjust(find_max_size(symbol: :owner)),
+          # group: "#{file_detail.group} ".ljust(@file_list.find_max_size(targets: @file_details, symbol: :group)),
+          group: "#{file_detail.group} ".rjust(find_max_size(symbol: :group)),
+          # filesize: file_detail.filesize.rjust(@file_list.find_max_size(targets: @file_details, symbol: :filesize)),
+          filesize: file_detail.filesize.rjust(find_max_size(symbol: :filesize)),
           time_stamp: file_detail.time_stamp.strftime('%_m %_d %R'),
           file_name_and_symlink: File.symlink?(file_detail.file_name) ? format_file_name_and_symlink(file_detail) : file_detail.file_name }
       puts file_detail.values.join(' ')
@@ -36,8 +41,9 @@ class DisplayedFileFormatter
     format_file_names.transpose.each { |n| puts n.join(' ') }
   end
 
-  def find_max_size(symbol = nil)
-    @file_details.map(&symbol).map(&:size).max
+  # 以下、置くか検討中
+  def find_max_size(symbol: nil)
+    @file_list.calc_max_size(targets: @file_details, symbol:)
   end
 
   def format_file_name_and_symlink(file_detail)
@@ -57,7 +63,8 @@ class DisplayedFileFormatter
   end
 
   def calc_columns_number(max_columns, display_width)
-    longest_name_size = find_max_size(:file_name)
+    # longest_name_size = @file_list.find_max_size(targets: @file_details, symbol: :file_name)
+    longest_name_size = find_max_size(symbol: :file_name)
     minus_columns = (0...max_columns).find { longest_name_size < display_width / (max_columns - _1) } || max_columns - 1
     max_columns - minus_columns
   end
