@@ -10,9 +10,8 @@ class FileList
     @total_blocks = calc_total_blocks
   end
 
-  # def find_max_size(targets:, symbol: nil)
-  def calc_max_size(targets:, symbol: nil)
-    targets.map(&symbol).map(&:size).max
+  def find_max_size(symbol: nil)
+    @file_details.map(&symbol).map(&:size).max
   end
 
   private
